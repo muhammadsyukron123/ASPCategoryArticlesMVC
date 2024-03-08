@@ -1,0 +1,82 @@
+﻿@model IEnumerable<MyWebFormApp.BLL.DTOs.ArticleDTO>
+
+@{
+    var categories = (List<CategoryDTO>)ViewBag.Categories;
+    var articles = (List<ArticleDTO>)ViewBag.Articles;
+}
+
+<div class="row">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Articles</h1>
+    </div>
+
+    <div class="col-lg-12">
+        <!-- Basic Card Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Sample Dropdown List</h6>
+                <button class="btn btn-primary">
+                    <a asp-action="Create" class="text-decoration-none text-white">Insert new article</a>
+                </button>
+            </div>
+            <div class="card-body">
+                @Html.Raw(ViewBag.Message)
+                <form asp-action="Index" class="form form-inline">
+                    <select name="CategoryID" class="form-control">
+                        @foreach (var category in categories)
+                        {
+                            if (Convert.ToInt32(ViewBag.CategoryID) == category.CategoryID)
+                            {
+                                <option value="@category.CategoryID" selected="selected">@category.CategoryName</option>
+                            }
+                            else
+                            {
+                                <option value="@category.CategoryID">@category.CategoryName</option>
+                            }
+                        }
+                    </select>&nbsp;
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </form>
+                <br />
+                <table class="table table-bordered">
+                    <thead>
+                    <th>Article name</th>
+                    <th>Category</th>
+                    <th>Details</th>
+                    <th>Publish Date</th>
+                    <th>Approval</th>
+                    <th>Picture</th>
+                    <th>&nbsp;</th>
+                    <th>&nbsp;</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var article in Model)
+                        {
+                            <tr>
+                                <td>@article.Title</td>
+                                <td>@article.Category.CategoryName</td>
+                                <td>@article.Details</td>
+                                <td>@article.PublishDate</td>
+                                <td>@if (article.IsApproved)
+                                    {
+                                        <i class="fa fa-check"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-circle-xmark"></i>
+                                    }
+                                </td>
+                                <td><img src="~/Pics/@(article.Pic)" width="100" height="100" /></td>
+                                <td><a asp-action="Edit" asp-route-id="@article.ArticleID" class="btn btn-warning btn-sm">edit</a></td>
+                                <td>
+                                    <a asp-action="Delete" onclick="return confirm('Want to delete the article?')" asp-route-id="@article.ArticleID" class="btn btn-danger btn-sm">delete</a>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
