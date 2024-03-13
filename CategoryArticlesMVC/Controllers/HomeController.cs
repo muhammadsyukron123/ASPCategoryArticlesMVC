@@ -11,7 +11,12 @@ namespace CategoryArticlesMVC.Controllers
         public IActionResult Index()
         {
             //cek kalau session ada
-            if (HttpContext.Session.GetString("user") != null)
+            if (HttpContext.Session.GetString("user") == null)
+            {
+                TempData["message"] = @"<div class='alert alert-danger'><strong>Error!</strong> You must login first !</div>";
+                return RedirectToAction("Login", "Users");
+            }
+            else
             {
                 var user = JsonSerializer.Deserialize<UserDTO>(HttpContext.Session.GetString("user"));
                 ViewBag.message = $"Welcome {user.FirstName} {user.LastName}";
@@ -37,7 +42,6 @@ namespace CategoryArticlesMVC.Controllers
         {
             return Content("This is the Contact action method...");
         }
-
 
     }
 }

@@ -20,6 +20,11 @@ namespace CategoryArticlesMVC.Controllers
 
         public IActionResult Index()
         {
+            if (HttpContext.Session.GetString("user") == null)
+            {
+                TempData["message"] = @"<div class='alert alert-danger'><strong>Error!</strong> You must login first !</div>";
+                return RedirectToAction("Login", "Users");
+            }
             var categories = _categoryBLL.GetAll();
             var article = _articleBLL.GetArticleWithCategory();
             ViewBag.Categories = categories;

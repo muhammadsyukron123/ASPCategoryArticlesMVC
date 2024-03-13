@@ -6,13 +6,8 @@
         Context.Response.Redirect("/Users/Login");
     }
     var user = JsonSerializer.Deserialize<UserDTO>(Context.Session.GetString("user"));
-    var roles = user.Roles.ToList();
-    var roleString = new StringBuilder();
-    foreach (var role in user.Roles)
-    {
-        //Build stringbuilder here
-        roleString.Append(role.RoleName + ",");
-    }
+    var roleString = Context.Session.GetString("roles");
+    
 }
 
 <!DOCTYPE html>
@@ -61,8 +56,8 @@
             {
                 <li class="nav-item">
                     <a class="nav-link" href="/Users/Index">
-                        <i class="fas fa-fw fa-tachometer-alt"></i>
-                        <span>Asign Roles</span>
+                        <i class="fas fa-fw fa-user"></i>
+                        <span>Assign Roles</span>
                     </a>
                 </li>
             }
@@ -70,13 +65,13 @@
             {
                 <li class="nav-item">
                     <a class="nav-link" href="/Categories/Index">
-                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <i class="fas fa-fw fa-folder-open"></i>
                         <span>Category</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/Articles/Index">
-                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <i class="fas fa-fw fa-newspaper"></i>
                         <span>Articles</span>
                     </a>
                 </li>
@@ -85,7 +80,7 @@
             {
                 <li class="nav-item">
                     <a class="nav-link" href="/Articles/Index">
-                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <i class="fas fa-fw fa-book"></i>
                         <span>Read Article</span>
                     </a>
                 </li>
