@@ -1,3 +1,3 @@
 <h1>
-  Project yang saya ada di folder CategoryArticlesMVC
+  Project yang saya kerjakan ada di folder CategoryArticlesMVC
 </h1>
