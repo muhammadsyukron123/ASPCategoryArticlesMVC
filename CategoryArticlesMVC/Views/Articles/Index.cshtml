@@ -1,8 +1,20 @@
 ﻿@model IEnumerable<MyWebFormApp.BLL.DTOs.ArticleDTO>
+@using System.Text.Json
+@using System.Text
 
 @{
     var categories = (List<CategoryDTO>)ViewBag.Categories;
     var articles = (List<ArticleDTO>)ViewBag.Articles;
+
+    var user = JsonSerializer.Deserialize<UserDTO>(Context.Session.GetString("user"));
+    var roles = user.Roles.ToList();
+    var roleString = new StringBuilder();
+    foreach (var role in user.Roles)
+    {
+        //Build stringbuilder here
+        roleString.Append(role.RoleName + ",");
+    }
+
 }
 
 <div class="row">
@@ -15,9 +27,12 @@
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">Sample Dropdown List</h6>
-                <button class="btn btn-primary">
-                    <a asp-action="Create" class="text-decoration-none text-white">Insert new article</a>
-                </button>
+                @if (roleString.ToString().Contains("contributor"))
+                {
+                    <button class="btn btn-primary">
+                        <a asp-action="Create" class="text-decoration-none text-white">Insert new article</a>
+                    </button>
+                }
             </div>
             <div class="card-body">
                 @Html.Raw(ViewBag.Message)
@@ -38,6 +53,48 @@
                     <input type="submit" value="Submit" class="btn btn-primary" />
                 </form>
                 <br />
+
+                @if (roleString.ToString().Contains("contributor"))
+                {
+                    <table class="table table-bordered">
+                        <thead>
+                        <th>Article name</th>
+                        <th>Category</th>
+                        <th>Details</th>
+                        <th>Publish Date</th>
+                        <th>Approval</th>
+                        <th>Picture</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                        </thead>
+                        <tbody>
+                            @foreach (var article in Model)
+                            {
+                                <tr>
+                                    <td>@article.Title</td>
+                                    <td>@article.Category.CategoryName</td>
+                                    <td>@article.Details</td>
+                                    <td>@article.PublishDate</td>
+                                    <td>
+                                        @if (article.IsApproved)
+                                        {
+                                            <i class="fa fa-check"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa fa-circle-xmark"></i>
+                                        }
+                                    </td>
+                                    <td><img src="~/Pics/@(article.Pic)" width="100" height="100" /></td>
+                                    <td><a asp-action="Edit" asp-route-id="@article.ArticleID" class="btn btn-warning btn-sm">edit</a></td>
+                                    <td>
+                                        <a asp-action="Delete" onclick="return confirm('Want to delete the article?')" asp-route-id="@article.ArticleID" class="btn btn-danger btn-sm">delete</a>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
                 <table class="table table-bordered">
                     <thead>
                     <th>Article name</th>
@@ -46,8 +103,6 @@
                     <th>Publish Date</th>
                     <th>Approval</th>
                     <th>Picture</th>
-                    <th>&nbsp;</th>
-                    <th>&nbsp;</th>
                     </thead>
                     <tbody>
                         @foreach (var article in Model)
@@ -57,7 +112,8 @@
                                 <td>@article.Category.CategoryName</td>
                                 <td>@article.Details</td>
                                 <td>@article.PublishDate</td>
-                                <td>@if (article.IsApproved)
+                                <td>
+                                    @if (article.IsApproved)
                                     {
                                         <i class="fa fa-check"></i>
                                     }
@@ -67,14 +123,13 @@
                                     }
                                 </td>
                                 <td><img src="~/Pics/@(article.Pic)" width="100" height="100" /></td>
-                                <td><a asp-action="Edit" asp-route-id="@article.ArticleID" class="btn btn-warning btn-sm">edit</a></td>
-                                <td>
-                                    <a asp-action="Delete" onclick="return confirm('Want to delete the article?')" asp-route-id="@article.ArticleID" class="btn btn-danger btn-sm">delete</a>
-
                             </tr>
                         }
                     </tbody>
                 </table>
+
+
+                
             </div>
         </div>
     </div>

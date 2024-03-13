@@ -1,62 +1,67 @@
 ﻿@model MyWebFormApp.BLL.DTOs.ArticleCreateDTO
 
 @{
-    var categories = (List<CategoryDTO>)ViewBag.Categories;
+    var categories = ViewBag.Categories;
 }
 
 <div class="row">
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Add Article</h1>
-    </div>
 
-    <div class="col-lg-12">
-        <!-- Basic Card Example -->
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Add Articles</h6>
-            </div>
-            <div class="card-body">
-                @Html.Raw(ViewBag.Message)
-                <form asp-action="Create" class="form" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label for="CategoryID">Category : </label>
-                        <select name="CategoryID" class="form-control">
-                            @foreach (var category in categories)
-                            {
-                                if (Convert.ToInt32(ViewBag.CategoryID) == category.CategoryID)
-                                {
-                                    <option value="@category.CategoryID" selected="selected">@category.CategoryName</option>
-                                }
-                                else
-                                {
-                                    <option value="@category.CategoryID">@category.CategoryName</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Title">Title</label>
-                        <input type="text" name="Title" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="Details">Details</label>
-                        <textarea name="Details" class="form-control" placeholder="Insert detail"></textarea>
-                    </div>
-                    <div class="form-group form-inline">
-                        <input type="checkbox" asp-for="IsApproved" class="form-check-input" />
-                        &nbsp;
-                        IsApproved
-                    </div>
-                    <div class="form-group">
-                        <label for="Pic">Picture</label>
-                        <input type="file" class="form-control" name="Pic"/>
-                    </div>
+	<div class="col-lg-12">
+		<!-- Basic Card Example -->
+		<div class="card shadow mb-4">
+			<div class="card-header py-3">
+				<h6 class="m-0 font-weight-bold text-primary">Add a New Article</h6>
+			</div>
+			<div class="card-body">
+				@Html.Raw(ViewData["message"])
+				<div class="col-lg-6">
+					<form method="post" asp-action="Create" v enctype="multipart/form-data">
+						<div class="form-group">
+							<label asp-for="CategoryID">Category ID:</label>
+							<select name="CategoryID" asp-for="CategoryID" class="form-control">
+								<option value="0">--Select Category--</option>
+								@foreach (var category in categories)
+								{
+									<option value="@category.CategoryID">@category.CategoryName</option>
+								}
+							</select>
+							<span class="text-danger" asp-validation-for="CategoryID"></span>
+						</div>
+						<div class="form-group">
+							<label asp-for="Title">Title:</label>
+							<input asp-for="Title" type="text" class="form-control" name="Title"
+								   placeholder="Insert Title" />
+							<span class="text-danger" asp-validation-for="Title"></span>
+						</div>
+						<div class="form-group">
+							<label asp-for="Details">Details:</label>
+<textarea asp-for="Details" type="text" class="form-control" name="Details"
+		  placeholder="Insert Details"></textarea>
+							<span class="text-danger" asp-validation-for="Details"></span>
+						</div>
+						<div class="form-group form-inline">
+							<input type="checkbox" asp-for="IsApproved" class="form-control me-5" />
+							&nbsp;
+							&nbsp;
+							<label for="IsApproved">Is Approved</label>
+						</div>
+						<div class="form-group">
+							<label for="ImageArticle">Picture:</label>
+							<input type="file" class="form-control" name="ImageArticle" />
+						</div>
 
-                    <input type="submit" value="Submit" class="btn btn-primary" />
-                </form>
-            </div>
-        </div>
+						<button type="submit" class="btn btn-success btn-sm">
+							<i class="icon fa fa-plus-circle"></i> Create
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
 
-    </div>
+	</div>
 
 </div>
+
+@section Scripts {
+	@await Html.PartialAsync("_ValidationScriptsPartial")
+}

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using MyWebFormApp.BLL;
 using MyWebFormApp.BLL.DTOs;
 using MyWebFormApp.BLL.Interfaces;
@@ -36,55 +37,53 @@ namespace CategoryArticlesMVC.Controllers
             return View(articles);
         }
 
-        public IActionResult Create()
-        {
-            var categories = _categoryBLL.GetAll();
-            ViewBag.Categories = categories;
-            return View();
-        }
+		// GET: ArticlesController/Create
+		public ActionResult Create()
+		{
+			ViewData["Title"] = "Create Article";
+			ViewBag.Categories = _categoryBLL.GetAll();
+			return View();
+		}
+
+		// POST: ArticlesController/Create
+		[HttpPost]
+		public ActionResult Create(ArticleCreateDTO article, IFormFile ImageArticle)
+		{
+			try
+			{
+				if (ImageArticle != null)
+				{
+					if (!Helper.IsImageFile(ImageArticle.FileName))
+					{
+						TempData["message"] = @"<div class='alert alert-danger'><strong>Error!</strong> File is not an image !</div>";
+						return RedirectToAction("Index");
+					}
+					string fileName = $"{Guid.NewGuid()}_{ImageArticle.FileName}" + Path.GetExtension(ImageArticle.FileName);
+					string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Pics", fileName);
+
+					using (var fileStream = new FileStream(filePath, FileMode.Create))
+					{
+						ImageArticle.CopyTo(fileStream);
+					}
+
+					article.Pic = fileName;
 
 
-        [HttpPost]
-        public IActionResult Create(ArticleCreateDTO articleCreateDTO, IFormFile Pic)
-        {
-            var categories = _categoryBLL.GetAll();
-            ViewBag.Categories = categories;
-            try
-            {
-                if (Pic != null)
-                {
-                    if (Helper.IsImageFile(Pic.FileName))
-                    {
-                        //random file name based on GUID
-                        var fileName = $"{Guid.NewGuid()}_{Pic.FileName}";
-                        
-                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "pics", fileName);
-                        articleCreateDTO.Pic = fileName;
-                        using (var fileStream = new FileStream(filePath, FileMode.Create))
-                        {
-                            Pic.CopyTo(fileStream);
-                        }
-                        articleCreateDTO.Pic = fileName;
-                        TempData["message2"] = @"<div class='alert alert-success'><strong>Success!&nbsp;</strong>File uploaded successfully !</div>";
-                    }
-                    else
-                    {
-                        TempData["message2"] = @"<div class='alert alert-danger'><strong>Error!&nbsp;</strong>File is not an image file !</div>";
-                    }
-                }
+				}
 
-                _articleBLL.Insert(articleCreateDTO);
-                TempData["message"] = $@"<div class='alert alert-success'><strong>Success!</strong>Article {articleCreateDTO.Title} has been created !</div>";
-                return RedirectToAction("Index", "Articles", new { categoryId = articleCreateDTO.CategoryID });
-            }
-            catch (System.Exception ex)
-            {
-                TempData["message"] = $@"<div class='alert alert-danger'><strong>Error!</strong>{ex.Message}</div>";
-                return View(articleCreateDTO);
-            }
-        }
+				_articleBLL.Insert(article);
 
-        public IActionResult Edit(int id)
+				TempData["message"] = @"<div class='alert alert-success'><strong>Success!</strong> Add Article Success !</div>";
+			}
+			catch (Exception ex)
+			{
+				TempData["message"] = @"<div class='alert alert-danger'><strong>Error!</strong> " + ex.Message + "</div>";
+			}
+
+			return RedirectToAction("Index");
+		}
+
+		public IActionResult Edit(int id)
         {
             var categories = _categoryBLL.GetAll();
             

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MyWebFormApp.BLL.DTOs;
+using System.Text.Json;
 
 namespace CategoryArticlesMVC.Controllers
 {
@@ -8,6 +10,13 @@ namespace CategoryArticlesMVC.Controllers
         // Home/Index
         public IActionResult Index()
         {
+            //cek kalau session ada
+            if (HttpContext.Session.GetString("user") != null)
+            {
+                var user = JsonSerializer.Deserialize<UserDTO>(HttpContext.Session.GetString("user"));
+                ViewBag.message = $"Welcome {user.FirstName} {user.LastName}";
+            }
+
             ViewData["Title"] = "Home Page";
             return View();
         }
@@ -28,5 +37,7 @@ namespace CategoryArticlesMVC.Controllers
         {
             return Content("This is the Contact action method...");
         }
+
+
     }
 }

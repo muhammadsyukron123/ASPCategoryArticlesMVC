@@ -14,8 +14,16 @@ namespace CategoryArticlesMVC.Controllers
             _categoryBLL = categoryBLL;
         }
 
+
         public IActionResult Index(int pageNumber = 1, int pageSize = 5, string search = "", string act = "")
         {
+            //pengecekan session username
+            if (HttpContext.Session.GetString("user") == null)
+            {
+                TempData["message"] = @"<div class='alert alert-danger'><strong>Error!</strong> You must login first !</div>";
+                return RedirectToAction("Login", "Users");
+            }
+
             if (TempData["message"] != null)
             {
                 ViewData["message"] = TempData["message"];
