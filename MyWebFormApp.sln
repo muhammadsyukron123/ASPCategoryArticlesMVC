@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyWebFormApp.BLL", "MyWebFo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleMVC", "SampleMVC\SampleMVC.csproj", "{8B45C05A-90F2-4D2B-B3A2-52CCC02784DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CategoryArticlesMVC", "CategoryArticlesMVC\CategoryArticlesMVC.csproj", "{20705E0B-50EF-4051-9ACB-39FB51076D8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CategoryArticlesMVC", "CategoryArticlesMVC\CategoryArticlesMVC.csproj", "{20705E0B-50EF-4051-9ACB-39FB51076D8B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyRESTServices", "MyRESTServices\MyRESTServices.csproj", "{1A3D8627-89D1-4B19-9724-28F5E0882684}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{20705E0B-50EF-4051-9ACB-39FB51076D8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20705E0B-50EF-4051-9ACB-39FB51076D8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20705E0B-50EF-4051-9ACB-39FB51076D8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A3D8627-89D1-4B19-9724-28F5E0882684}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A3D8627-89D1-4B19-9724-28F5E0882684}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A3D8627-89D1-4B19-9724-28F5E0882684}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A3D8627-89D1-4B19-9724-28F5E0882684}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

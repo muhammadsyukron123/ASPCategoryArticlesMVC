@@ -2,6 +2,8 @@
 using MyWebFormApp.BLL.Interfaces;
 using CategoryArticlesMVC.Models;
 using MyWebFormApp.BLL.DTOs;
+using NuGet.Protocol.Plugins;
+using System.Text.Json;
 
 namespace CategoryArticlesMVC.Controllers
 {
@@ -61,7 +63,22 @@ namespace CategoryArticlesMVC.Controllers
 
             return View(models);
         }
-
+        .
+        public IActionResult GetFromServices()
+        {
+            //get data from the MyRESTServices
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:7081/");
+            var response = client.GetAsync("api/Categories");
+            response.Wait();
+            var result = response.Result;
+            if (result.IsSuccessStatusCode)
+            {
+                var resultRead = JsonSerializer.Deserialize<List<CategoryDTO>>(result.Content.ReadAsStringAsync().Result);
+                return View(resultRead);
+            }
+            return View();
+        }
 
         public IActionResult Detail(int id)
         {
