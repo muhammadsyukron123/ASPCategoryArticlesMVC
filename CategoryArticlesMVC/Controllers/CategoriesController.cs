@@ -4,17 +4,22 @@ using CategoryArticlesMVC.Models;
 using MyWebFormApp.BLL.DTOs;
 using NuGet.Protocol.Plugins;
 using System.Text.Json;
+using CategoryArticlesMVC.Services;
 
 namespace CategoryArticlesMVC.Controllers
 {
     public class CategoriesController : Controller
     {
         private readonly ICategoryBLL _categoryBLL;
+        private readonly ICategoryServices _categoryServices;
 
-        public CategoriesController(ICategoryBLL categoryBLL)
+        public CategoriesController(ICategoryBLL categoryBLL, ICategoryServices categoryServices)
         {
             _categoryBLL = categoryBLL;
+            _categoryServices = categoryServices;
+
         }
+
 
 
         public IActionResult Index(int pageNumber = 1, int pageSize = 5, string search = "", string act = "")
@@ -63,22 +68,44 @@ namespace CategoryArticlesMVC.Controllers
 
             return View(models);
         }
-        .
-        public IActionResult GetFromServices()
+
+        public async Task<IActionResult> GetFromServices()
         {
-            //get data from the MyRESTServices
-            var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:7081/");
-            var response = client.GetAsync("api/Categories");
-            response.Wait();
-            var result = response.Result;
-            if (result.IsSuccessStatusCode)
+            try
             {
-                var resultRead = JsonSerializer.Deserialize<List<CategoryDTO>>(result.Content.ReadAsStringAsync().Result);
-                return View(resultRead);
+                // Create HttpClient instance within a 'using' block for proper disposal
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("http://localhost:5256/");
+                    var response = await client.GetAsync("api/Categories");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var resultReadAsync = await response.Content.ReadAsStringAsync();
+                        var resultRead = JsonSerializer.Deserialize<List<CategoryDTO>>(resultReadAsync, new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+                        return View(resultRead);
+                    }
+                    else
+                    {
+                        // Handle unsuccessful response
+                        return View();
+                    }
+                }
             }
-            return View();
+            catch (Exception ex)
+            {
+                // Log or handle the exception appropriately
+                ViewBag.ErrorMessage = "An error occurred while fetching data from the service: " + ex.Message;
+                return View();
+            }
         }
+
+
+
+
 
         public IActionResult Detail(int id)
         {

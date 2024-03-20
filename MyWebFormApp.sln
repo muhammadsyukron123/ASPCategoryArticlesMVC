@@ -15,7 +15,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleMVC", "SampleMVC\Samp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CategoryArticlesMVC", "CategoryArticlesMVC\CategoryArticlesMVC.csproj", "{20705E0B-50EF-4051-9ACB-39FB51076D8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyRESTServices", "MyRESTServices\MyRESTServices.csproj", "{1A3D8627-89D1-4B19-9724-28F5E0882684}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyRESTServices", "MyRESTServices\MyRESTServices.csproj", "{1A3D8627-89D1-4B19-9724-28F5E0882684}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyRESTServices.Domain", "MyRESTServices.Domain\MyRESTServices.Domain.csproj", "{893E5134-0F9F-4904-B49E-F4E9CCBC283D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyRESTServices.Data", "MyRESTServices.Data\MyRESTServices.Data.csproj", "{C3B2266F-CA38-4BE0-BECC-9CD3AA0D286F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyRESTServices.BLL", "MyRESTServices.BLL\MyRESTServices.BLL.csproj", "{352F3E27-1457-46E5-8D6D-D84566A63F52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +57,18 @@ Global
 		{1A3D8627-89D1-4B19-9724-28F5E0882684}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A3D8627-89D1-4B19-9724-28F5E0882684}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A3D8627-89D1-4B19-9724-28F5E0882684}.Release|Any CPU.Build.0 = Release|Any CPU
+		{893E5134-0F9F-4904-B49E-F4E9CCBC283D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{893E5134-0F9F-4904-B49E-F4E9CCBC283D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{893E5134-0F9F-4904-B49E-F4E9CCBC283D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{893E5134-0F9F-4904-B49E-F4E9CCBC283D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3B2266F-CA38-4BE0-BECC-9CD3AA0D286F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3B2266F-CA38-4BE0-BECC-9CD3AA0D286F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3B2266F-CA38-4BE0-BECC-9CD3AA0D286F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3B2266F-CA38-4BE0-BECC-9CD3AA0D286F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{352F3E27-1457-46E5-8D6D-D84566A63F52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{352F3E27-1457-46E5-8D6D-D84566A63F52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{352F3E27-1457-46E5-8D6D-D84566A63F52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{352F3E27-1457-46E5-8D6D-D84566A63F52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

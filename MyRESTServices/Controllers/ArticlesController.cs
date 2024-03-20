@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MyWebFormApp.BLL.Interfaces;
+using MyRESTServices.BLL.DTOs;
+using MyRESTServices.BLL.Interfaces;
 
 namespace MyRESTServices.Controllers
 {
@@ -17,9 +18,9 @@ namespace MyRESTServices.Controllers
         
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var result = _articleBLL.GetArticleWithCategory();
+            var result = await _articleBLL.GetArticleWithCategory();
             if (result == null)
             {
                 return NotFound("Article tidak ditemukan");
@@ -28,9 +29,9 @@ namespace MyRESTServices.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var result = _articleBLL.GetArticleById(id);
+            var result = await _articleBLL.GetArticleById(id);
             if (result == null)
             {
                 return NotFound("Article tidak ditemukan");
@@ -39,9 +40,9 @@ namespace MyRESTServices.Controllers
         }
 
         [HttpGet("GetByCategory")]
-        public IActionResult GetByCategory(int id)
+        public async Task<IActionResult> GetByCategory(int id)
         {
-            var result = _articleBLL.GetArticleByCategory(id);
+            var result = await _articleBLL.GetArticleByCategory(id);
             if (result == null)
             {
                 return NotFound("Article tidak ditemukan");
@@ -50,20 +51,21 @@ namespace MyRESTServices.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] MyWebFormApp.BLL.DTOs.ArticleCreateDTO articleCreateDTO)
+        public async Task<IActionResult> Post([FromBody] ArticleCreateDTO articleCreateDTO)
         {
             if (articleCreateDTO == null)
             {
                 return BadRequest("Article tidak boleh kosong");
             }
-            _articleBLL.Insert(articleCreateDTO);
+            await _articleBLL.Insert(articleCreateDTO);
             return Ok("Article berhasil dibuat");
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] MyWebFormApp.BLL.DTOs.ArticleUpdateDTO articleUpdateDTO)
+        public async Task<IActionResult> Put(int id, [FromBody] ArticleUpdateDTO articleUpdateDTO)
         {
             var existingArticle = _articleBLL.GetArticleById(id);
+
             if (existingArticle == null)
             {
                 return NotFound("Article tidak ditemukan");
@@ -73,19 +75,19 @@ namespace MyRESTServices.Controllers
                 return BadRequest("Article tidak boleh kosong");
             }
             articleUpdateDTO.ArticleID = id;
-            _articleBLL.Update(articleUpdateDTO);
+            await _articleBLL.Update(articleUpdateDTO);
             return Ok("Article berhasil diupdate");
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var existingArticle = _articleBLL.GetArticleById(id);
+            var existingArticle = await _articleBLL.GetArticleById(id);
             if (existingArticle == null)
             {
                 return NotFound("Article tidak ditemukan");
             }
-            _articleBLL.Delete(id);
+            await _articleBLL.Delete(id);
             return Ok("Article berhasil dihapus");
         }
        

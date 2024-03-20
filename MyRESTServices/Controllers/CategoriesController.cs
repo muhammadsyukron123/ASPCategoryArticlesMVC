@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
 using Microsoft.AspNetCore.Mvc;
-using MyWebFormApp.BLL.DTOs;
-using MyWebFormApp.BLL.Interfaces;
-using MyWebFormApp.BO;
+using MyRESTServices.BLL.DTOs;
+using MyRESTServices.BLL.Interfaces;
 
 namespace MyRESTServices.Controllers
 {
@@ -17,43 +16,54 @@ namespace MyRESTServices.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            return Ok(_categoryBLL.GetAll());
+            return Ok(await _categoryBLL.GetAll());
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return Ok(_categoryBLL.GetById(id));
+            return Ok(await _categoryBLL.GetById(id));
         }
 
         [HttpGet("GetByName")]
-        public IActionResult GetByName(string name)
+        public async Task<IActionResult> GetByName(string name)
         {
-            var result = _categoryBLL.GetByName(name);
+            var result = await _categoryBLL.GetByName(name);
             if (result == null)
             {
                 return NotFound("Category tidak ditemukan");
             }
-            return Ok();
+            return Ok(result);
+        }
+
+        [HttpGet("GetWithPaging")]
+        public async Task<IActionResult> GetWithPaging(int pageNumber, int pageSize, string name)
+        {
+            var result = await _categoryBLL.GetWithPaging(pageNumber, pageSize, name);
+            if (result == null)
+            {
+                return NotFound("Category tidak ditemukan");
+            }
+            return Ok(result);
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] CategoryCreateDTO categoryCreateDTO)
+        public async Task<IActionResult> Post([FromBody] CategoryCreateDTO categoryCreateDTO)
         {
             if (categoryCreateDTO == null)
             {
                    return BadRequest("Category tidak boleh kosong");
             }
-            _categoryBLL.Insert(categoryCreateDTO);
+            await _categoryBLL.Insert(categoryCreateDTO);
             return Ok("Category berhasil dibuat");
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] CategoryUpdateDTO categoryUpdateDTO)
+        public async Task<IActionResult> Put(int id, [FromBody] CategoryUpdateDTO categoryUpdateDTO)
         {
-            var existingCategory = _categoryBLL.GetById(id);
+            var existingCategory = await _categoryBLL.GetById(id);
             if (existingCategory == null)
             {
                 return NotFound("Category tidak ditemukan");
@@ -63,23 +73,16 @@ namespace MyRESTServices.Controllers
                 return BadRequest("Category tidak boleh kosong");
             }
             categoryUpdateDTO.CategoryID = id;
-            _categoryBLL.Update(categoryUpdateDTO);
+            await _categoryBLL.Update(categoryUpdateDTO);
+            var updatedCategory = await _categoryBLL.GetById(id);
             return Ok("Category berhasil diupdate");
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var existingCategory = _categoryBLL.GetById(id);
-            if (existingCategory == null)
-            {
-                return NotFound("Category tidak ditemukan");
-            }
-            _categoryBLL.Delete(id);
+            await _categoryBLL.Delete(id);
             return Ok("Category berhasil dihapus");
         }
-
-
-
     }
 }
