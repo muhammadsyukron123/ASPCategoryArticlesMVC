@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace MyRESTServices.BLL.DTOs.Validation
 {
-    public class ArticleCreateDTOValidator : AbstractValidator<ArticleCreateDTO>
+    public class ArticleUpdateDTOValidator : AbstractValidator<ArticleUpdateDTO>
     {
-        public ArticleCreateDTOValidator() 
-        { 
+        public ArticleUpdateDTOValidator()
+        {
             RuleFor(x => x.CategoryID).NotEmpty().WithMessage("Category is required");
             RuleFor(x => x.Title).NotEmpty().WithMessage("Title is required");
         }

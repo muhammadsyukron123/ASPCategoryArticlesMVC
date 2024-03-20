@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyRESTServices.BLL.DTOs;
 using MyRESTServices.BLL.Interfaces;
@@ -10,9 +11,14 @@ namespace MyRESTServices.Controllers
     public class ArticlesController : ControllerBase
     {
         private readonly IArticleBLL _articleBLL;
-        public ArticlesController(IArticleBLL articleBLL)
+        private readonly IValidator<ArticleCreateDTO> _validatorArticleCreate;
+        private readonly IValidator<ArticleUpdateDTO> _validatorArticleUpdate;
+
+        public ArticlesController(IArticleBLL articleBLL, IValidator<ArticleCreateDTO> validatorArticleCreate, IValidator<ArticleUpdateDTO> validatorArticleUpdate)
         {
             _articleBLL = articleBLL;
+            _validatorArticleCreate = validatorArticleCreate;
+            _validatorArticleUpdate = validatorArticleUpdate;
         }
 
         
@@ -53,9 +59,11 @@ namespace MyRESTServices.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ArticleCreateDTO articleCreateDTO)
         {
-            if (articleCreateDTO == null)
+            var validatorResult = _validatorArticleCreate.Validate(articleCreateDTO);
+            if (!validatorResult.IsValid)
             {
-                return BadRequest("Article tidak boleh kosong");
+                Helpers.Extensions.AddToModelState(validatorResult, ModelState);
+                return BadRequest(validatorResult.Errors);
             }
             await _articleBLL.Insert(articleCreateDTO);
             return Ok("Article berhasil dibuat");
@@ -70,9 +78,11 @@ namespace MyRESTServices.Controllers
             {
                 return NotFound("Article tidak ditemukan");
             }
-            if (articleUpdateDTO == null)
+            var validatorResult = _validatorArticleUpdate.Validate(articleUpdateDTO);
+            if (!validatorResult.IsValid)
             {
-                return BadRequest("Article tidak boleh kosong");
+                Helpers.Extensions.AddToModelState(validatorResult, ModelState);
+                return BadRequest(validatorResult.Errors);
             }
             articleUpdateDTO.ArticleID = id;
             var updated = await _articleBLL.Update(articleUpdateDTO);
