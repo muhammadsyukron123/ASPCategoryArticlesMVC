@@ -10,7 +10,7 @@ namespace MyRESTServices.BLL.Interfaces
         Task<IEnumerable<ArticleDTO>> GetArticleWithCategory();
         Task<IEnumerable<ArticleDTO>> GetArticleByCategory(int categoryId);
         Task<int>InsertWithIdentity(ArticleCreateDTO article);
-        Task<Task> Update(ArticleUpdateDTO article);
+        Task<ArticleDTO> Update(ArticleUpdateDTO article);
         Task<bool> Delete(int id);
         Task<ArticleDTO> GetArticleById(int id);
     }

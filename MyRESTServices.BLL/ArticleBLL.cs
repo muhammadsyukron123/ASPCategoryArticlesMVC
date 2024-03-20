@@ -72,11 +72,23 @@ namespace MyRESTServices.BLL
             return inserted;
         }
 
-        public async Task<Task> Update(ArticleUpdateDTO article)
+        public async Task<ArticleDTO> Update(ArticleUpdateDTO article)
         {
-            var articleUpdate = _mapper.Map<Article>(article);
-            await _articleData.Update(articleUpdate);
-            return Task.CompletedTask;
+            var existingArticle = await _articleData.GetById(article.ArticleID);
+            if (existingArticle == null)
+            {
+                throw new Exception("Article not found");
+            }
+
+            existingArticle.CategoryId = article.CategoryID;
+            existingArticle.ArticleId = article.ArticleID;
+            existingArticle.Title = article.Title;
+            existingArticle.Details = article.Details;
+            existingArticle.IsApproved = article.IsApproved;
+            existingArticle.Pic = article.Pic;
+
+            await _articleData.Update(existingArticle);
+            return _mapper.Map<ArticleDTO>(existingArticle);
         }
     }
 }

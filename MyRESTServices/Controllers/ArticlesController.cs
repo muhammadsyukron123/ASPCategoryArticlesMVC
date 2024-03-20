@@ -64,7 +64,7 @@ namespace MyRESTServices.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ArticleUpdateDTO articleUpdateDTO)
         {
-            var existingArticle = _articleBLL.GetArticleById(id);
+            var existingArticle = await _articleBLL.GetArticleById(id);
 
             if (existingArticle == null)
             {
@@ -75,8 +75,8 @@ namespace MyRESTServices.Controllers
                 return BadRequest("Article tidak boleh kosong");
             }
             articleUpdateDTO.ArticleID = id;
-            await _articleBLL.Update(articleUpdateDTO);
-            return Ok("Article berhasil diupdate");
+            var updated = await _articleBLL.Update(articleUpdateDTO);
+            return Ok(updated);
         }
 
         [HttpDelete("{id}")]
