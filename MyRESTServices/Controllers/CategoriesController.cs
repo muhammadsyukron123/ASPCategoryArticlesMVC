@@ -1,4 +1,5 @@
 ﻿
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using MyRESTServices.BLL.DTOs;
 using MyRESTServices.BLL.Interfaces;
@@ -10,9 +11,13 @@ namespace MyRESTServices.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryBLL _categoryBLL;
-        public CategoriesController(ICategoryBLL categoryBLL)
+        private readonly IValidator<CategoryCreateDTO> _validatorCategoryCreate;
+        private readonly IValidator<CategoryUpdateDTO> _validatorCategoryUpdate;
+        public CategoriesController(ICategoryBLL categoryBLL, IValidator<CategoryCreateDTO> validatorCategoryCreate, IValidator<CategoryUpdateDTO> validatorCategoryUpdate)
         {
             _categoryBLL = categoryBLL;
+            _validatorCategoryCreate = validatorCategoryCreate;
+            _validatorCategoryUpdate = validatorCategoryUpdate;
         }
 
         [HttpGet]
@@ -52,9 +57,11 @@ namespace MyRESTServices.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CategoryCreateDTO categoryCreateDTO)
         {
-            if (categoryCreateDTO == null)
+            var validationResult = _validatorCategoryCreate.Validate(categoryCreateDTO);
+            if (!validationResult.IsValid)
             {
-                   return BadRequest("Category tidak boleh kosong");
+                Helpers.Extensions.AddToModelState(validationResult, ModelState);
+                return BadRequest(ModelState);
             }
             await _categoryBLL.Insert(categoryCreateDTO);
             return Ok("Category berhasil dibuat");
@@ -68,9 +75,11 @@ namespace MyRESTServices.Controllers
             {
                 return NotFound("Category tidak ditemukan");
             }
-            if (categoryUpdateDTO == null)
+            var validationResult = _validatorCategoryUpdate.Validate(categoryUpdateDTO);
+            if (!validationResult.IsValid)
             {
-                return BadRequest("Category tidak boleh kosong");
+                Helpers.Extensions.AddToModelState(validationResult, ModelState);
+                return BadRequest(ModelState);
             }
             categoryUpdateDTO.CategoryID = id;
             await _categoryBLL.Update(categoryUpdateDTO);
