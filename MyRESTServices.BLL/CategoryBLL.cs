@@ -107,7 +107,7 @@ namespace MyRESTServices.BLL
             }
         }
 
-        public async Task<int> GetCountCategories(string name)
+        public async Task<int> GetCountCategories(string name = "")
         {
             try
             {
@@ -122,7 +122,7 @@ namespace MyRESTServices.BLL
             }
         }
 
-        public async Task<IEnumerable<CategoryDTO>> GetWithPaging(int pageNumber, int pageSize, string name)
+        public async Task<IEnumerable<CategoryDTO>> GetWithPaging(int pageNumber, int pageSize, string name = "")
         {
             try
             {

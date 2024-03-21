@@ -96,11 +96,11 @@ namespace MyRESTServices.Data
             }
         }
 
-        public async Task<int> GetCountCategories(string name)
+        public async Task<int> GetCountCategories(string name = "")
         {
             try
             {
-                var count = await _context.Categories.Where(c => c.CategoryName.Contains(name)).CountAsync();
+                var count = await _context.Categories.Where(c => string.IsNullOrEmpty(name) || c.CategoryName.Contains(name)).CountAsync();
                 return count;
             }
             catch (Exception ex)
@@ -111,11 +111,11 @@ namespace MyRESTServices.Data
             }
         }
 
-        public async Task<IEnumerable<Category>> GetWithPaging(int pageNumber, int pageSize, string name)
+        public async Task<IEnumerable<Category>> GetWithPaging(int pageNumber, int pageSize, string name = "")
         {
             try
             {
-                var categories = await _context.Categories.Where(c => c.CategoryName.Contains(name))
+                var categories = await _context.Categories.Where(c => string.IsNullOrEmpty(name) || c.CategoryName.Contains(name))
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .ToListAsync();
@@ -165,6 +165,7 @@ namespace MyRESTServices.Data
             }
         }
 
+
         public async Task<Category> Update(Category entity)
         {
             try
@@ -178,6 +179,21 @@ namespace MyRESTServices.Data
                 // Handle the exception here
                 // You can log the exception or perform any other necessary actions
                 throw new Exception("Error occurred while updating category", ex);
+            }
+        }
+
+        public async Task<int> CountCategories(string name ="")
+        {
+            try
+            {
+                var count = await _context.Categories.Where(c => string.IsNullOrEmpty(name) || c.CategoryName.Contains(name)).CountAsync();
+                return count;
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception here
+                // You can log the exception or perform any other necessary actions
+                throw new Exception("Error occurred while getting count of categories", ex);
             }
         }
     }

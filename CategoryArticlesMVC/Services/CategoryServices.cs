@@ -127,6 +127,50 @@ namespace CategoryArticlesMVC.Services
             return true;
         }
 
+        public async Task<IEnumerable<CategoryDTO>> GetWithPaging(int pageNumber, int pageSize, string name = "")
+        {
+            //http://localhost:5256/api/Categories/GetWithPaging?pageNumber=1&pageSize=5&name=a
+            var httpResponse = await _client.GetAsync(BaseUrl() + "/Categories/GetWithPaging?pageNumber=" + pageNumber + "&pageSize=" + pageSize + "&name=" + name);
+
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                throw new Exception("Cannot retrieve category");
+            }
+
+            var content = await httpResponse.Content.ReadAsStringAsync();
+            var categories = JsonSerializer.Deserialize<IEnumerable<CategoryDTO>>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (categories == null)
+            {
+                throw new Exception("No categories found");
+            }
+
+            return categories;
+        }
+
+        public async Task<int> GetCountCategories(string name = "")
+        {
+            var httpResponse = await _client.GetAsync(BaseUrl() + "/Categories/GetCategoryCount?name=" + name);
+
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                throw new Exception("Cannot retrieve category");
+            }
+
+            var content = await httpResponse.Content.ReadAsStringAsync();
+            var count = JsonSerializer.Deserialize<int>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return count;
+        }
+
+
+
         //add
     }
 }

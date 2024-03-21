@@ -22,7 +22,7 @@ namespace CategoryArticlesMVC.Controllers
         }
 
 
-        public IActionResult Index(int pageNumber = 1, int pageSize = 5, string search = "", string act = "")
+        public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 5, string name = "", string act = "")
         {
             //pengecekan session username
             if (HttpContext.Session.GetString("user") == null)
@@ -36,9 +36,9 @@ namespace CategoryArticlesMVC.Controllers
                 ViewData["message"] = TempData["message"];
             }
 
-            ViewData["search"] = search;
-            var models = _categoryBLL.GetWithPaging(pageNumber, pageSize, search);
-            var maxsize = _categoryBLL.GetCountCategories(search);
+            ViewData["search"] = name;
+            
+            var maxsize = await _categoryServices.GetCountCategories(name);
             //return Content($"{pageNumber} - {pageSize} - {search} - {act}");
 
             if (act == "next")
@@ -57,13 +57,11 @@ namespace CategoryArticlesMVC.Controllers
                 }
                 ViewData["pageNumber"] = pageNumber;
             }
-            else
-            {
-                ViewData["pageNumber"] = 2;
-            }
 
+            ViewData["pageNumber"] = pageNumber;
             ViewData["pageSize"] = pageSize;
             //ViewData["action"] = action;
+            var models = await _categoryServices.GetWithPaging(pageNumber, pageSize, name);
 
 
             return View(models);
@@ -114,7 +112,7 @@ namespace CategoryArticlesMVC.Controllers
                 //ViewData["message"] = $"<div class='alert alert-danger'><strong>Error!</strong>{ex.Message}</div>";
                 TempData["message"] = $"<div class='alert alert-danger'><strong>Error!</strong>{ex.Message}</div>";
             }
-            return RedirectToAction("GetFromServices");
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Edit(int id)
@@ -140,7 +138,7 @@ namespace CategoryArticlesMVC.Controllers
             {
                 ViewData["message"] = $"<div class='alert alert-danger'><strong>Error!</strong>{ex.Message}</div>";
             }
-            return RedirectToAction("GetFromServices");
+            return RedirectToAction("Index");
         }
 
 
@@ -151,7 +149,7 @@ namespace CategoryArticlesMVC.Controllers
             if (model == null)
             {
                 TempData["message"] = @"<div class='alert alert-danger'><strong>Error!</strong>Category Not Found !</div>";
-                return RedirectToAction("GetFromServices");
+                return RedirectToAction("Index");
             }
             return View(model);
         }
@@ -169,7 +167,7 @@ namespace CategoryArticlesMVC.Controllers
                 TempData["message"] = $"<div class='alert alert-danger'><strong>Error!</strong>{ex.Message}</div>";
                 return View(category);
             }
-            return RedirectToAction("GetFromServices");
+            return RedirectToAction("Index");
         }
 
         public IActionResult DisplayDropdownList()

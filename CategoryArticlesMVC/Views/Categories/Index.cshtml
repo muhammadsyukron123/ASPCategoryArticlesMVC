@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MyWebFormApp.BLL.DTOs.CategoryDTO>
+﻿@model IEnumerable<MyRESTServices.BLL.DTOs.CategoryDTO>
 @{
     int pageNumber = 0;
     if (ViewData["pageNumber"] != null)
@@ -23,7 +23,7 @@
 
                 <form asp-action="Index" method="get" class="form-inline">
                     <p>
-                        <input type="text" id="search" class="form-control" name="search" value="@ViewData["search"]"
+                        <input type="text" id="search" class="form-control" name="name" value="@ViewData["search"]"
                                placeholder="search category name" />
                         &nbsp;
                         <input type="submit" class="btn btn-primary btn-sm" value="Search" />

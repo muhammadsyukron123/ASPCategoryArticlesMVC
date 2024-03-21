@@ -65,7 +65,7 @@ namespace MyRESTServices.Controllers
         }
 
         [HttpGet("GetWithPaging")]
-        public async Task<IActionResult> GetWithPaging(int pageNumber, int pageSize, string name)
+        public async Task<IActionResult> GetWithPaging(int pageNumber, int pageSize, string name = "")
         {
             try
             {
@@ -94,7 +94,8 @@ namespace MyRESTServices.Controllers
                     return BadRequest(ModelState);
                 }
                 await _categoryBLL.Insert(categoryCreateDTO);
-                return Ok("Category berhasil dibuat");
+
+                return Ok(categoryCreateDTO);
             }
             catch (Exception ex)
             {
@@ -136,6 +137,19 @@ namespace MyRESTServices.Controllers
             {
                 await _categoryBLL.Delete(id);
                 return Ok("Category berhasil dihapus");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetCategoryCount")]
+        public async Task<IActionResult> GetCategoryCount(string name = "")
+        {
+            try
+            {
+                return Ok(await _categoryBLL.GetCountCategories(name));
             }
             catch (Exception ex)
             {
