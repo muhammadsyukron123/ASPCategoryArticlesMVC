@@ -65,8 +65,16 @@ namespace CategoryArticlesMVC.Controllers
             }
             else if (act == "last")
             {
-                pageNumber = (int)Math.Ceiling((double)maxsize / pageSize);
-                ViewData["pageNumber"] = pageNumber;
+                if (maxsize == 0)
+                {
+                    pageNumber= 1;
+                }
+                else
+                {
+                    pageNumber = (int)Math.Ceiling((double)maxsize / pageSize);
+                    ViewData["pageNumber"] = pageNumber;
+                }
+                
             }
 
             
