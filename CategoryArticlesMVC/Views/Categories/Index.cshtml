@@ -55,10 +55,10 @@
                     </tbody>
                 </table>
 
-                <a class="btn btn-outline-info btn-sm">First</a>&nbsp;
-                <a href="/Categories/Index?act=prev&pageNumber=@pageNumber" class="btn btn-outline-info btn-sm">Prev</a>&nbsp;
-                <a href="/Categories/Index?act=next&pageNumber=@pageNumber" class="btn btn-outline-info btn-sm">Next</a>&nbsp;
-                <a class="btn btn-outline-info btn-sm">Last</a>
+                <a href="/Categories/Index?act=first&name=@ViewData["search"]" class="btn btn-outline-info btn-sm">First</a>&nbsp;
+                <a href="/Categories/Index?act=prev&pageNumber=@pageNumber&name=@ViewData["search"]" class="btn btn-outline-info btn-sm">Prev</a>&nbsp;
+                <a href="/Categories/Index?act=next&pageNumber=@pageNumber&name=@ViewData["search"]" class="btn btn-outline-info btn-sm">Next</a>&nbsp;
+                <a href="/Categories/Index?act=last&name=@ViewData["search"]" class="btn btn-outline-info btn-sm">Last</a>
 
             </div>
         </div>

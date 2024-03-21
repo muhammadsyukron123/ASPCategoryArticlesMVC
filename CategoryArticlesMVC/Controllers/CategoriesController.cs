@@ -37,7 +37,7 @@ namespace CategoryArticlesMVC.Controllers
             }
 
             ViewData["search"] = name;
-            
+
             var maxsize = await _categoryServices.GetCountCategories(name);
             //return Content($"{pageNumber} - {pageSize} - {search} - {act}");
 
@@ -58,10 +58,24 @@ namespace CategoryArticlesMVC.Controllers
                 ViewData["pageNumber"] = pageNumber;
             }
 
+            if (act == "first")
+            {
+                pageNumber = 1;
+                ViewData["pageNumber"] = pageNumber;
+            }
+            else if (act == "last")
+            {
+                pageNumber = (int)Math.Ceiling((double)maxsize / pageSize);
+                ViewData["pageNumber"] = pageNumber;
+            }
+
+            
+
             ViewData["pageNumber"] = pageNumber;
             ViewData["pageSize"] = pageSize;
             //ViewData["action"] = action;
             var models = await _categoryServices.GetWithPaging(pageNumber, pageSize, name);
+
 
 
             return View(models);
