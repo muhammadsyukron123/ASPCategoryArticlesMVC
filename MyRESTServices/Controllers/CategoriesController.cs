@@ -23,75 +23,124 @@ namespace MyRESTServices.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _categoryBLL.GetAll());
+            try
+            {
+                return Ok(await _categoryBLL.GetAll());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            return Ok(await _categoryBLL.GetById(id));
+            try
+            {
+                return Ok(await _categoryBLL.GetById(id));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
         [HttpGet("GetByName")]
         public async Task<IActionResult> GetByName(string name)
         {
-            var result = await _categoryBLL.GetByName(name);
-            if (result == null)
+            try
             {
-                return NotFound("Category tidak ditemukan");
+                var result = await _categoryBLL.GetByName(name);
+                if (result == null)
+                {
+                    return NotFound("Category tidak ditemukan");
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
         [HttpGet("GetWithPaging")]
         public async Task<IActionResult> GetWithPaging(int pageNumber, int pageSize, string name)
         {
-            var result = await _categoryBLL.GetWithPaging(pageNumber, pageSize, name);
-            if (result == null)
+            try
             {
-                return NotFound("Category tidak ditemukan");
+                var result = await _categoryBLL.GetWithPaging(pageNumber, pageSize, name);
+                if (result == null)
+                {
+                    return NotFound("Category tidak ditemukan");
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CategoryCreateDTO categoryCreateDTO)
         {
-            var validationResult = _validatorCategoryCreate.Validate(categoryCreateDTO);
-            if (!validationResult.IsValid)
+            try
             {
-                Helpers.Extensions.AddToModelState(validationResult, ModelState);
-                return BadRequest(ModelState);
+                var validationResult = _validatorCategoryCreate.Validate(categoryCreateDTO);
+                if (!validationResult.IsValid)
+                {
+                    Helpers.Extensions.AddToModelState(validationResult, ModelState);
+                    return BadRequest(ModelState);
+                }
+                await _categoryBLL.Insert(categoryCreateDTO);
+                return Ok("Category berhasil dibuat");
             }
-            await _categoryBLL.Insert(categoryCreateDTO);
-            return Ok("Category berhasil dibuat");
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] CategoryUpdateDTO categoryUpdateDTO)
         {
-            var existingCategory = await _categoryBLL.GetById(id);
-            if (existingCategory == null)
+            try
             {
-                return NotFound("Category tidak ditemukan");
+                var existingCategory = await _categoryBLL.GetById(id);
+                if (existingCategory == null)
+                {
+                    return NotFound("Category tidak ditemukan");
+                }
+                var validationResult = _validatorCategoryUpdate.Validate(categoryUpdateDTO);
+                if (!validationResult.IsValid)
+                {
+                    Helpers.Extensions.AddToModelState(validationResult, ModelState);
+                    return BadRequest(ModelState);
+                }
+                categoryUpdateDTO.CategoryID = id;
+                await _categoryBLL.Update(categoryUpdateDTO);
+                var updatedCategory = await _categoryBLL.GetById(id);
+                return Ok("Category berhasil diupdate");
             }
-            var validationResult = _validatorCategoryUpdate.Validate(categoryUpdateDTO);
-            if (!validationResult.IsValid)
+            catch (Exception ex)
             {
-                Helpers.Extensions.AddToModelState(validationResult, ModelState);
-                return BadRequest(ModelState);
+                return StatusCode(500, $"An error occurred: {ex.Message}");
             }
-            categoryUpdateDTO.CategoryID = id;
-            await _categoryBLL.Update(categoryUpdateDTO);
-            var updatedCategory = await _categoryBLL.GetById(id);
-            return Ok("Category berhasil diupdate");
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _categoryBLL.Delete(id);
-            return Ok("Category berhasil dihapus");
+            try
+            {
+                await _categoryBLL.Delete(id);
+                return Ok("Category berhasil dihapus");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
     }
 }

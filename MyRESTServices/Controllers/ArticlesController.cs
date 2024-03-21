@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyRESTServices.BLL.DTOs;
 using MyRESTServices.BLL.Interfaces;
+using MyRESTServices.Models;
 
 namespace MyRESTServices.Controllers
 {
@@ -21,86 +22,154 @@ namespace MyRESTServices.Controllers
             _validatorArticleUpdate = validatorArticleUpdate;
         }
 
-        
-
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var result = await _articleBLL.GetArticleWithCategory();
-            if (result == null)
+            try
             {
-                return NotFound("Article tidak ditemukan");
-            }   
-            return Ok(result);
+                var result = await _articleBLL.GetArticleWithCategory();
+                if (result == null)
+                {
+                    return NotFound("Article tidak ditemukan");
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var result = await _articleBLL.GetArticleById(id);
-            if (result == null)
+            try
             {
-                return NotFound("Article tidak ditemukan");
+                var result = await _articleBLL.GetArticleById(id);
+                if (result == null)
+                {
+                    return NotFound("Article tidak ditemukan");
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpGet("GetByCategory")]
         public async Task<IActionResult> GetByCategory(int id)
         {
-            var result = await _articleBLL.GetArticleByCategory(id);
-            if (result == null)
+            try
             {
-                return NotFound("Article tidak ditemukan");
+                var result = await _articleBLL.GetArticleByCategory(id);
+                if (result == null)
+                {
+                    return NotFound("Article tidak ditemukan");
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ArticleCreateDTO articleCreateDTO)
         {
-            var validatorResult = _validatorArticleCreate.Validate(articleCreateDTO);
-            if (!validatorResult.IsValid)
+            try
             {
-                Helpers.Extensions.AddToModelState(validatorResult, ModelState);
-                return BadRequest(validatorResult.Errors);
+                var validatorResult = _validatorArticleCreate.Validate(articleCreateDTO);
+                if (!validatorResult.IsValid)
+                {
+                    Helpers.Extensions.AddToModelState(validatorResult, ModelState);
+                    return BadRequest(validatorResult.Errors);
+                }
+                await _articleBLL.Insert(articleCreateDTO);
+                return Ok("Article berhasil dibuat");
             }
-            await _articleBLL.Insert(articleCreateDTO);
-            return Ok("Article berhasil dibuat");
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
+
+        //post with upload picture file
+        [HttpPost("FileUpload")]
+        public async Task<IActionResult> Post([FromForm] ArticleWithFile articleWithFile)
+        {
+            if (articleWithFile.file == null || articleWithFile.file.Length == 0)
+            {
+                return BadRequest("File is required");
+            }
+            var newName = $"{Guid.NewGuid()}_{articleWithFile.file.FileName}";
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", newName);
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await articleWithFile.file.CopyToAsync(stream);
+            }
+
+            var articleCreateDTO = new ArticleCreateDTO
+            {
+                CategoryID = articleWithFile.CategoryId,
+                Title = articleWithFile.Title,
+                Details = articleWithFile.Details,
+                IsApproved = articleWithFile.IsApproved,
+                Pic = newName
+            };
+
+            var article = await _articleBLL.Insert(articleCreateDTO);
+
+            return CreatedAtAction(nameof(Get), new { id = article.ArticleID }, article);
+        }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ArticleUpdateDTO articleUpdateDTO)
         {
-            var existingArticle = await _articleBLL.GetArticleById(id);
+            try
+            {
+                var existingArticle = await _articleBLL.GetArticleById(id);
 
-            if (existingArticle == null)
-            {
-                return NotFound("Article tidak ditemukan");
+                if (existingArticle == null)
+                {
+                    return NotFound("Article tidak ditemukan");
+                }
+                var validatorResult = _validatorArticleUpdate.Validate(articleUpdateDTO);
+                if (!validatorResult.IsValid)
+                {
+                    Helpers.Extensions.AddToModelState(validatorResult, ModelState);
+                    return BadRequest(validatorResult.Errors);
+                }
+                articleUpdateDTO.ArticleID = id;
+                var updated = await _articleBLL.Update(articleUpdateDTO);
+                return Ok(updated);
             }
-            var validatorResult = _validatorArticleUpdate.Validate(articleUpdateDTO);
-            if (!validatorResult.IsValid)
+            catch (Exception ex)
             {
-                Helpers.Extensions.AddToModelState(validatorResult, ModelState);
-                return BadRequest(validatorResult.Errors);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-            articleUpdateDTO.ArticleID = id;
-            var updated = await _articleBLL.Update(articleUpdateDTO);
-            return Ok(updated);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var existingArticle = await _articleBLL.GetArticleById(id);
-            if (existingArticle == null)
+            try
             {
-                return NotFound("Article tidak ditemukan");
+                var existingArticle = await _articleBLL.GetArticleById(id);
+                if (existingArticle == null)
+                {
+                    return NotFound("Article tidak ditemukan");
+                }
+                await _articleBLL.Delete(id);
+                return Ok("Article berhasil dihapus");
             }
-            await _articleBLL.Delete(id);
-            return Ok("Article berhasil dihapus");
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
-       
-
     }
 }

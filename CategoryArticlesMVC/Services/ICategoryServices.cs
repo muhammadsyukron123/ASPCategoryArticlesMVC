@@ -1,9 +1,14 @@
-﻿using MyWebFormApp.BO;
+﻿
+using MyRESTServices.BLL.DTOs;
 
 namespace CategoryArticlesMVC.Services
 {
     public interface ICategoryServices
     {
-        Task<IEnumerable<Category>> GetAll();
+        Task<IEnumerable<CategoryDTO>> GetAll();
+        Task<CategoryDTO> GetById(int id);
+        Task<CategoryDTO> Insert(CategoryCreateDTO categoryCreateDTO);
+        Task<CategoryDTO> Update(CategoryUpdateDTO categoryUpdateDTO);
+        Task<bool> Delete(int id);
     }
 }

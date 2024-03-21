@@ -19,9 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MyRESTServices.BLL\MyRESTServices.BLL.csproj" />
+    <ProjectReference Include="..\MyRESTServices.Domain\MyRESTServices.Domain.csproj" />
     <ProjectReference Include="..\MyWebFormApp.BLL\MyWebFormApp.BLL.csproj" />
     <ProjectReference Include="..\MyWebFormApp.BO\MyWebFormApp.BO.csproj" />
     <ProjectReference Include="..\MyWebFormApp.DAL\MyWebFormApp.DAL.csproj" />
+    <!--<ProjectReference Include="..\SampleMVC\SampleMVC.csproj" />-->
   </ItemGroup>
 
 </Project>

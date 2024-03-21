@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyWebFormApp.BLL.Interfaces;
 using CategoryArticlesMVC.Models;
-using MyWebFormApp.BLL.DTOs;
 using NuGet.Protocol.Plugins;
 using System.Text.Json;
 using CategoryArticlesMVC.Services;
+using MyRESTServices.BLL.DTOs;
 
 namespace CategoryArticlesMVC.Controllers
 {
@@ -12,6 +12,7 @@ namespace CategoryArticlesMVC.Controllers
     {
         private readonly ICategoryBLL _categoryBLL;
         private readonly ICategoryServices _categoryServices;
+        private const string BaseUrl = "http://localhost:5256/";
 
         public CategoriesController(ICategoryBLL categoryBLL, ICategoryServices categoryServices)
         {
@@ -19,7 +20,6 @@ namespace CategoryArticlesMVC.Controllers
             _categoryServices = categoryServices;
 
         }
-
 
 
         public IActionResult Index(int pageNumber = 1, int pageSize = 5, string search = "", string act = "")
@@ -71,45 +71,26 @@ namespace CategoryArticlesMVC.Controllers
 
         public async Task<IActionResult> GetFromServices()
         {
-            try
+            var categories = await _categoryServices.GetAll();
+            List<Category> categoriesList = new List<Category>();
+            foreach (var category in categories)
             {
-                // Create HttpClient instance within a 'using' block for proper disposal
-                using (var client = new HttpClient())
+                categoriesList.Add(new Category
                 {
-                    client.BaseAddress = new Uri("http://localhost:5256/");
-                    var response = await client.GetAsync("api/Categories");
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var resultReadAsync = await response.Content.ReadAsStringAsync();
-                        var resultRead = JsonSerializer.Deserialize<List<CategoryDTO>>(resultReadAsync, new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        });
-                        return View(resultRead);
-                    }
-                    else
-                    {
-                        // Handle unsuccessful response
-                        return View();
-                    }
-                }
+                    CategoryID = category.CategoryID,
+                    CategoryName = category.CategoryName
+                });
             }
-            catch (Exception ex)
-            {
-                // Log or handle the exception appropriately
-                ViewBag.ErrorMessage = "An error occurred while fetching data from the service: " + ex.Message;
-                return View();
-            }
+            return View(categoriesList);
         }
 
 
 
 
 
-        public IActionResult Detail(int id)
+        public async Task<IActionResult> Detail(int id)
         {
-            var model = _categoryBLL.GetById(id);
+            var model = await _categoryServices.GetById(id);
             return View(model);
         }
 
@@ -120,11 +101,11 @@ namespace CategoryArticlesMVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CategoryCreateDTO categoryCreate)
+        public async Task<IActionResult> Create(CategoryCreateDTO categoryCreate)
         {
             try
             {
-                _categoryBLL.Insert(categoryCreate);
+                await _categoryServices.Insert(categoryCreate);
                 //ViewData["message"] = @"<div class='alert alert-success'><strong>Success!</strong>Add Data Category Success !</div>";
                 TempData["message"] = @"<div class='alert alert-success'><strong>Success!</strong>Add Data Category Success !</div>";
             }
@@ -133,55 +114,54 @@ namespace CategoryArticlesMVC.Controllers
                 //ViewData["message"] = $"<div class='alert alert-danger'><strong>Error!</strong>{ex.Message}</div>";
                 TempData["message"] = $"<div class='alert alert-danger'><strong>Error!</strong>{ex.Message}</div>";
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("GetFromServices");
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var model = _categoryBLL.GetById(id);
+            var model = await _categoryServices.GetById(id);
             if (model == null)
             {
                 TempData["message"] = @"<div class='alert alert-danger'><strong>Error!</strong>Category Not Found !</div>";
-                return RedirectToAction("Index");
+                return RedirectToAction("GetFromServices");
             }
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult Edit(int id, CategoryUpdateDTO categoryEdit)
+        public async Task<IActionResult> Edit(int id, CategoryUpdateDTO categoryEdit)
         {
             try
             {
-                _categoryBLL.Update(categoryEdit);
+                await _categoryServices.Update(categoryEdit);
                 TempData["message"] = @"<div class='alert alert-success'><strong>Success!</strong>Edit Data Category Success !</div>";
             }
             catch (Exception ex)
             {
                 ViewData["message"] = $"<div class='alert alert-danger'><strong>Error!</strong>{ex.Message}</div>";
-                return View(categoryEdit);
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("GetFromServices");
         }
 
 
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var model = _categoryBLL.GetById(id);
+            var model = await _categoryServices.GetById(id);
             if (model == null)
             {
                 TempData["message"] = @"<div class='alert alert-danger'><strong>Error!</strong>Category Not Found !</div>";
-                return RedirectToAction("Index");
+                return RedirectToAction("GetFromServices");
             }
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult Delete(int id, CategoryDTO category)
+        public async Task<IActionResult> Delete(int id, CategoryDTO category)
         {
             try
             {
-                _categoryBLL.Delete(id);
+                await _categoryServices.Delete(id);
                 TempData["message"] = @"<div class='alert alert-success'><strong>Success!</strong>Delete Data Category Success !</div>";
             }
             catch (Exception ex)
@@ -189,7 +169,7 @@ namespace CategoryArticlesMVC.Controllers
                 TempData["message"] = $"<div class='alert alert-danger'><strong>Error!</strong>{ex.Message}</div>";
                 return View(category);
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("GetFromServices");
         }
 
         public IActionResult DisplayDropdownList()

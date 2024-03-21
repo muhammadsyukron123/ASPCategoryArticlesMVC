@@ -18,84 +18,164 @@ namespace MyRESTServices.BLL
 
         public CategoryBLL(ICategoryData categoryData, IMapper mapper)
         {
-
-            _categoryData = categoryData;
-            _mapper = mapper;
+            try
+            {
+                _categoryData = categoryData;
+                _mapper = mapper;
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception here
+                Console.WriteLine("An error occurred while initializing CategoryBLL: " + ex.Message);
+                throw;
+            }
         }
         public async Task<bool> Delete(int id)
         {
-            var category = await _categoryData.GetById(id);
-            if (category == null)
+            try
             {
-                throw new Exception("Category not found");
+                var category = await _categoryData.GetById(id);
+                if (category == null)
+                {
+                    throw new Exception("Category not found");
+                }
+                var deleted = await _categoryData.Delete(id);
+                return deleted;
             }
-            var deleted = await _categoryData.Delete(id);
-            return deleted;
+            catch (Exception ex)
+            {
+                // Handle the exception here
+                Console.WriteLine("An error occurred while deleting the category: " + ex.Message);
+                throw;
+            }
         }
 
         public async Task<IEnumerable<CategoryDTO>> GetAll()
         {
-            var categories = await _categoryData.GetAll();
-            if (categories == null)
+            try
             {
-                throw new Exception("No categories found");
+                var categories = await _categoryData.GetAll();
+                if (categories == null)
+                {
+                    throw new Exception("No categories found");
+                }
+                return _mapper.Map<IEnumerable<CategoryDTO>>(categories);
             }
-            return _mapper.Map<IEnumerable<CategoryDTO>>(categories);
+            catch (Exception ex)
+            {
+                // Handle the exception here
+                Console.WriteLine("An error occurred while getting all categories: " + ex.Message);
+                throw;
+            }
         }
 
         public async Task<CategoryDTO> GetById(int id)
         {
-            var category = await _categoryData.GetById(id);
-            if (category == null)
+            try
             {
-                throw new Exception("Category not found");
+                var category = await _categoryData.GetById(id);
+                if (category == null)
+                {
+                    throw new Exception("Category not found");
+                }
+                return _mapper.Map<CategoryDTO>(category);
             }
-            return _mapper.Map<CategoryDTO>(category);
+            catch (Exception ex)
+            {
+                // Handle the exception here
+                Console.WriteLine("An error occurred while getting category by ID: " + ex.Message);
+                throw;
+            }
         }
 
         public async Task<IEnumerable<CategoryDTO>> GetByName(string name)
         {
-            var categories = await _categoryData.GetByName(name);
-            if (categories == null)
+            try
             {
-                throw new Exception("No categories found");
+                var categories = await _categoryData.GetByName(name);
+                if (categories == null)
+                {
+                    throw new Exception("No categories found");
+                }
+                return _mapper.Map<IEnumerable<CategoryDTO>>(categories);
             }
-            return _mapper.Map<IEnumerable<CategoryDTO>>(categories);
+            catch (Exception ex)
+            {
+                // Handle the exception here
+                Console.WriteLine("An error occurred while getting categories by name: " + ex.Message);
+                throw;
+            }
         }
 
         public async Task<int> GetCountCategories(string name)
         {
-            var count = await _categoryData.GetCountCategories(name);
-            return count;
+            try
+            {
+                var count = await _categoryData.GetCountCategories(name);
+                return count;
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception here
+                Console.WriteLine("An error occurred while getting the count of categories: " + ex.Message);
+                throw;
+            }
         }
 
         public async Task<IEnumerable<CategoryDTO>> GetWithPaging(int pageNumber, int pageSize, string name)
         {
-            var categories = await _categoryData.GetWithPaging(pageNumber, pageSize, name);
-            if (categories == null)
+            try
             {
-                throw new Exception("No categories found");
+                var categories = await _categoryData.GetWithPaging(pageNumber, pageSize, name);
+                if (categories == null)
+                {
+                    throw new Exception("No categories found");
+                }
+                return _mapper.Map<IEnumerable<CategoryDTO>>(categories);
             }
-            return _mapper.Map<IEnumerable<CategoryDTO>>(categories);
+            catch (Exception ex)
+            {
+                // Handle the exception here
+                Console.WriteLine("An error occurred while getting categories with paging: " + ex.Message);
+                throw;
+            }
         }
 
         public async Task<Task> Insert(CategoryCreateDTO entity)
         {
-            var category = _mapper.Map<Category>(entity);
-            await _categoryData.Insert(category);
-            return Task.CompletedTask;
+            try
+            {
+                var category = _mapper.Map<Category>(entity);
+                await _categoryData.Insert(category);
+                return Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception here
+                Console.WriteLine("An error occurred while inserting the category: " + ex.Message);
+                throw;
+            }
         }
 
         public async Task<Task> Update(CategoryUpdateDTO entity)
         {
-            var existingCategory = await _categoryData.GetById(entity.CategoryID);
-            if (existingCategory == null)
+            try
             {
-                throw new Exception("Category not found");
+                var existingCategory = await _categoryData.GetById(entity.CategoryID);
+                if (existingCategory == null)
+                {
+                    throw new Exception("Category not found");
+                }
+                _mapper.Map(entity, existingCategory);
+                await _categoryData.Update(existingCategory);
+                return Task.CompletedTask;
             }
-            _mapper.Map(entity, existingCategory);
-            await _categoryData.Update(existingCategory);
-            return Task.CompletedTask;
+            catch (Exception ex)
+            {
+                // Handle the exception here
+                Console.WriteLine("An error occurred while updating the category: " + ex.Message);
+                throw;
+            }
         }
     }
 }
