@@ -29,6 +29,7 @@ namespace MyRESTServices.Controllers
 
         }
 
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -47,6 +48,7 @@ namespace MyRESTServices.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("{username}")]
         public async Task<IActionResult> Get(string username)
         {
@@ -139,6 +141,7 @@ namespace MyRESTServices.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("ChangePassword")]
         public async Task<IActionResult> ChangePassword(string username, [FromBody]string password)
         {
@@ -152,7 +155,7 @@ namespace MyRESTServices.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
+        [Authorize(Roles="admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string username)
         {

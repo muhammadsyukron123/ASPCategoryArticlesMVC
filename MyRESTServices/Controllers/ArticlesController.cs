@@ -24,7 +24,7 @@ namespace MyRESTServices.Controllers
             _validatorArticleUpdate = validatorArticleUpdate;
         }
 
-        [Authorize(Roles = "contributor, reader")]
+        [Authorize(Roles = "admin, contributor, reader")]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -43,7 +43,7 @@ namespace MyRESTServices.Controllers
             }
         }
 
-        [Authorize(Roles = "contributor, reader")]
+        [Authorize(Roles = "admin, contributor, reader")]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -62,7 +62,7 @@ namespace MyRESTServices.Controllers
             }
         }
 
-        [Authorize(Roles = "contributor, reader")]
+        [Authorize(Roles = "admin, contributor, reader")]
         [HttpGet("GetByCategory")]
         public async Task<IActionResult> GetByCategory(int id)
         {
@@ -81,7 +81,7 @@ namespace MyRESTServices.Controllers
             }
         }
 
-        [Authorize(Roles = "contributor")]
+        [Authorize(Roles = "admin,contributor")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ArticleCreateDTO articleCreateDTO)
         {
@@ -101,7 +101,7 @@ namespace MyRESTServices.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [Authorize(Roles = "contributor")]
+        [Authorize(Roles = "admin, contributor")]
         //post with upload picture file
         [HttpPost("FileUpload")]
         public async Task<IActionResult> Post([FromForm] ArticleWithFile articleWithFile)
@@ -131,7 +131,7 @@ namespace MyRESTServices.Controllers
             return CreatedAtAction(nameof(Get), new { id = article.ArticleID }, article);
         }
 
-        [Authorize(Roles = "contributor")]
+        [Authorize(Roles = "admin, contributor")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ArticleUpdateDTO articleUpdateDTO)
         {
@@ -158,7 +158,7 @@ namespace MyRESTServices.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [Authorize(Roles = "contributor")]
+        [Authorize(Roles = "admin, contributor")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
