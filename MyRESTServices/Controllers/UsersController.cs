@@ -1,7 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using MyRESTServices.BLL.DTOs;
 using MyRESTServices.BLL.Interfaces;
+using MyRESTServices.Helpers;
+using MyRESTServices.ViewModels;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace MyRESTServices.Controllers
 {
@@ -11,11 +19,14 @@ namespace MyRESTServices.Controllers
     {
         private IUserBLL _userBLL;
         private IRoleBLL _roleBLL;
+        private AppSettings _appSettings;
 
-        public UsersController(IUserBLL userBLL, IRoleBLL roleBLL)
+        public UsersController(IUserBLL userBLL, IRoleBLL roleBLL, IOptions<AppSettings> appSettings)
         {
             _userBLL = userBLL;
             _roleBLL = roleBLL;
+            _appSettings = appSettings.Value;
+
         }
 
         [HttpGet]
@@ -88,7 +99,38 @@ namespace MyRESTServices.Controllers
             try
             {
                 var result = await _userBLL.LoginMVC(user);
-                return Ok(result);
+                if (result == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                List<Claim> claims = new List<Claim>();
+                claims.Add(new Claim(ClaimTypes.Name, result.Username));
+                foreach (var role in result.Roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+                }
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(claims),
+                    Expires = DateTime.UtcNow.AddHours(1),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var userWithToken = new UserWithToken
+                {
+                    Username = result.Username,
+                    Address = result.Address,
+                    Email = result.Email,
+                    FirstName = result.FirstName,
+                    LastName = result.LastName,
+                    Roles = result.Roles,
+                    Telp = result.Telp,
+                    Token = tokenHandler.WriteToken(token)
+                };
+                return Ok(userWithToken);
             }
             catch (Exception ex)
             {

@@ -161,10 +161,18 @@ namespace MyRESTServices.Data
             {
                 var hashedPassword = Helpers.Md5Hash.GetHash(password);
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username && u.Password == hashedPassword);
+                var userRole = await _context.Roles.Where(ur => ur.Usernames.Contains(user)).ToListAsync();
+                List<Role> roles = new List<Role>();
+                foreach(var item in userRole)
+                {
+                    roles.Add(item);
+                }
+
                 if (user == null)
                 {
                     throw new Exception("User not found");
                 }
+                user.Roles = roles;
                 return user;
             }
             catch (Exception ex)
