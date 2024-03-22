@@ -17,6 +17,11 @@ builder.Services.AddScoped<ICategoryData, CategoryData>();
 builder.Services.AddScoped<ICategoryBLL, CategoryBLL>();
 builder.Services.AddScoped<IArticleData, ArticleData>();
 builder.Services.AddScoped<IArticleBLL, ArticleBLL>();
+builder.Services.AddScoped<IUserData, UserData>();
+builder.Services.AddScoped<IUserBLL, UserBLL>();
+builder.Services.AddScoped<IRoleData, RoleData>();
+builder.Services.AddScoped<IRoleBLL, RoleBLL>();
+
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
