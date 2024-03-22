@@ -79,6 +79,7 @@ namespace MyRESTServices.Controllers
             }
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost("AddUserToRole")]
         public async Task<IActionResult> AddUserToRole([FromBody] string Username, int RoleId)
         {

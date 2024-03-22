@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MyRESTServices.Controllers
 {
+
+    [Authorize(Roles = "contributor")]
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]

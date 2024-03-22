@@ -22,6 +22,7 @@ namespace MyRESTServices.Controllers
             _validatorCategoryUpdate = validatorCategoryUpdate;
         }
 
+        [Authorize(Roles = "contributor")]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -35,7 +36,7 @@ namespace MyRESTServices.Controllers
             }
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "contributor")]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -49,6 +50,7 @@ namespace MyRESTServices.Controllers
             }
         }
 
+        [Authorize(Roles = "contributor")]
         [HttpGet("GetByName")]
         public async Task<IActionResult> GetByName(string name)
         {
@@ -67,6 +69,7 @@ namespace MyRESTServices.Controllers
             }
         }
 
+        [Authorize(Roles = "contributor")]
         [HttpGet("GetWithPaging")]
         public async Task<IActionResult> GetWithPaging(int pageNumber, int pageSize, string name = "")
         {
@@ -85,6 +88,7 @@ namespace MyRESTServices.Controllers
             }
         }
 
+        [Authorize(Roles = "contributor")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CategoryCreateDTO categoryCreateDTO)
         {
@@ -106,6 +110,7 @@ namespace MyRESTServices.Controllers
             }
         }
 
+        [Authorize(Roles = "contributor")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] CategoryUpdateDTO categoryUpdateDTO)
         {
@@ -133,6 +138,7 @@ namespace MyRESTServices.Controllers
             }
         }
 
+        [Authorize(Roles = "contributor")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -147,6 +153,7 @@ namespace MyRESTServices.Controllers
             }
         }
 
+        [Authorize(Roles = "contributor")]
         [HttpGet("GetCategoryCount")]
         public async Task<IActionResult> GetCategoryCount(string name = "")
         {
